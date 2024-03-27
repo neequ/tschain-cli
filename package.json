@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -8,6 +8,7 @@
     "start": "node --experimental-specifier-resolution=node app",
     "start:demo": "node --experimental-specifier-resolution=node app app_demo",
     "start:gov": "node --experimental-specifier-resolution=node app app_gov",
+    "start:lod": "node --experimental-specifier-resolution=node ./app_lod/demo.js",
     "test": "node --experimental-specifier-resolution=node test",
     "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress"
   },
