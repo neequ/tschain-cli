@@ -1,4 +1,10 @@
 export default {
+
+  /**
+   * 获取 AsyncFunction 构造器
+   */
+  AsyncFunction: Object.getPrototypeOf(async function () { }).constructor,
+  
   /**
    * 将 markdown 文本解析到对象
    * @param {*} markdown 
@@ -9,7 +15,7 @@ export default {
     const tree = {};
     let currentKey = '';
     let inCodeBlock = false; // 用于跟踪是否处于代码块内
-  
+
     lines.forEach(line => {
       if (line.startsWith('#')) {
         // 获取标题行并清理，作为key
@@ -25,7 +31,7 @@ export default {
         tree[currentKey] += line.trim() + '\n';
       }
     });
-  
+
     return tree;
   }
 }

@@ -224,11 +224,24 @@ class History {
   totalTokens = () => this.history.map(msg => msg.numTokens).reduce((a, b) => a + b, 0)
 
   clear = () => {
-    this.history = []
-    // 加入系统提示词
-    if (app.system) {
-      this.add({ role: Role.System, content: app.system })
-    }
+    let that = this;
+
+    setTimeout(async function () {
+
+      that.history = []
+      // 加入系统提示词
+      if (app.system) {
+        that.add({ role: Role.System, content: app.system })
+      }
+
+      // 初始化文档
+      if (app.document) {
+        // 使用 AsyncFunction 构造器创建一个新的异步函数
+        // 注意，AsyncFunction 的参数是动态的，最后一个参数是函数体，其余的都是函数参数
+        const dynamicAsyncFunction = new utils.AsyncFunction('docChat', app.document);
+        await dynamicAsyncFunction(docChat)
+      }
+    }, 0)
   }
 
   get = () => this.history.map(msg => ({ role: msg.role, content: msg.content }))
@@ -278,6 +291,7 @@ console.log(prompts.info.usage)
 prompts.next()
 
 rl.on('line', (line) => {
+  // debugger;
   say.stop()
   switch (line.toLowerCase().trim()) {
     case '': return prompts.next()
