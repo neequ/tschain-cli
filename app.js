@@ -43,6 +43,10 @@ import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { DocxLoader } from 'langchain/document_loaders/fs/docx'
 import { PlaywrightWebBaseLoader } from 'langchain/document_loaders/web/playwright'
+import utils from './utils/index';
+
+// 获取 app 配置文件
+const app = global.app = utils.parseMarkdownToTree(fs.readFileSync('./app/index.md', 'utf-8'));
 
 const config = {
   chatApiParams: {
@@ -68,10 +72,10 @@ const prompts = {
     console.log('───────────────────────────────')
     rl.prompt()
   },
-  system: [
-    '始终使用带有适当语言标记的代码块',
-    '如果自截止日期以来答案可能发生变化，仅回复“我没有实时信息”'
-  ],
+  // system: [
+  //   '始终使用带有适当语言标记的代码块',
+  //   '如果自截止日期以来答案可能发生变化，仅回复“我没有实时信息”'
+  // ],
   imagePhrase: '[img]',
   webBrowsing: {
     needed: [
@@ -125,7 +129,7 @@ const prompts = {
     nothingToSay: '还没有消息，没有内容可以朗读'
   },
   info: {
-    help: fs.readFileSync('README.md', 'utf-8').split('```text')[1].split('```')[0].trim(),
+    usage: app.usage,
     exported: (file) => chalk.italic(`聊天记录已保存到${file}`),
     onExit: chalk.italic('再见！'),
     onClear: chalk.italic('聊天历史已清除！'),
@@ -139,7 +143,7 @@ const prompts = {
   }
 }
 
-const systemCommands = prompts.info.help.split(/\r?\n/)
+const systemCommands = prompts.info.usage.split(/\r?\n/)
   .filter(s => s.trim().startsWith('*'))
   .flatMap(s => s.split(':')[0].split(' '))
   .map(s => s.trim())
@@ -225,7 +229,10 @@ class History {
 
   clear = () => {
     this.history = []
-    prompts.system.map(prompt => this.add({ role: Role.System, content: prompt }))
+    // 加入系统提示词
+    if (app.system) {
+      this.add({ role: Role.System, content: app.system })
+    }
   }
 
   get = () => this.history.map(msg => ({ role: msg.role, content: msg.content }))
@@ -272,7 +279,7 @@ const googleSearch = (query) => config.googleSearchAuth.auth && config.googleSea
     .then(results => results.length ? Promise.resolve(results.join('\n')) : Promise.reject(prompts.errors.noResults))
   : Promise.reject(prompts.errors.missingGoogleKey)
 
-console.log(prompts.info.help)
+console.log(prompts.info.usage)
 prompts.next()
 
 rl.on('line', (line) => {
@@ -281,7 +288,7 @@ rl.on('line', (line) => {
     case '': return prompts.next()
     case 'q': case 'quit': case 'exit': return rl.close()
     case '?': case 'help': {
-      console.log(prompts.info.help)
+      console.log(prompts.info.usage)
       return prompts.next()
     }
     case 'clr': case 'clear': {

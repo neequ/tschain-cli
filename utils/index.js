@@ -14,7 +14,7 @@ export default {
       if (line.startsWith('#')) {
         // 获取标题行并清理，作为key
         const key = line.replace(/^#+\s*/, '').trim();
-        currentKey = key;
+        currentKey = key.toLowerCase();
         tree[currentKey] = ''; // 初始化空字符串，以待后续填充
         inCodeBlock = false; // 确保在遇到新标题时重置代码块标志
       } else if (line.startsWith('```')) {
