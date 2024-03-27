@@ -1,8 +1,18 @@
 import { ChatPromptTemplate } from "langchain/prompts";
 import { ChatOpenAI } from "@langchain/openai";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 import dotenv from 'dotenv'
 dotenv.config()
+
+
+const question = `工作时间是?`; 
+
+const json = JSON.parse(String(fs.readFileSync(path.join(__dirname, 'source.json'))));
 
 const prompt = ChatPromptTemplate.fromMessages([
   ["system", `请不要回答任何问题
@@ -45,7 +55,7 @@ A: []
 Q: {topic}
 A: `],
 ]);
-const promptValue = await prompt.invoke({ topic: "工作时间是?" });
+const promptValue = await prompt.invoke({ topic: question });
 console.log(promptValue);
 
 const promptAsMessages = promptValue.toChatMessages();
@@ -59,3 +69,29 @@ const model = new ChatOpenAI({});
 
 const response = await model.invoke(promptAsString);
 console.log(response);
+
+// 假设 response.content 是你从上述操作中获得的字符串 '[1.1]'
+const contentString = response.content;
+
+// 使用 JSON.parse 方法将字符串转换为数组
+const contentArray = JSON.parse(contentString);
+
+console.log(contentArray);
+// 输出将会是一个数组：[1.1]
+
+
+const txtContent = txtFromKeys(json, contentArray);
+
+
+const response2 = await model.invoke(`请根据背景知识回答问题,不要编造
+背景知识:
+${txtContent}
+当前问题: 
+Q: ${question}
+A: 
+`);
+console.log(response2);
+
+// 假设 response.content 是你从上述操作中获得的字符串 '[1.1]'
+const contentString2 = response2.content;
+console.log(`最后回答:${contentString2}`);
