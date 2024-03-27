@@ -156,3 +156,5 @@ npx playwright install
     - LLM APPs 配置文件
   - demo.tape
     - demo 动画教程生成脚本
+  - demo.md
+    - demo 的一些演示资料
