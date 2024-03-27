@@ -6,6 +6,7 @@ dotenv.config()
 
 // file system stuff
 import * as fs from 'fs';
+import * as path from 'path';
 import untildify from 'untildify'
 import downloadsFolder from 'downloads-folder'
 
@@ -45,8 +46,19 @@ import { DocxLoader } from 'langchain/document_loaders/fs/docx'
 import { PlaywrightWebBaseLoader } from 'langchain/document_loaders/web/playwright'
 import utils from './utils/index';
 
+let appFolder = `app_demo`;
+
+// app.js 或你的主脚本文件
+const args = process.argv.slice(2); // 移除前两个元素，获取额外的参数
+console.log(args); // 这会打印出 ["app_demo"] 如果你传递了 "app_demo" 作为参数
+// 你可以根据传入的参数来调整你的应用行为
+if (args[0]) {
+  appFolder = args[0];
+  console.log(`运行应用 ${appFolder} ...`);
+}
+
 // 获取 app 配置文件
-const app = global.app = utils.parseMarkdownToTree(fs.readFileSync('./app/index.md', 'utf-8'));
+const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(`./${appFolder}/index.md`, 'utf-8'));
 
 const config = {
   chatApiParams: {
@@ -187,14 +199,23 @@ class DocChat {
     this.clear()
   }
 
-  add = (file) => DocChat.toText(file)
-    .then(docs => DocChat.textSplitter.splitDocuments(docs))
-    .then(docs => {
-      this.vectorStore.addDocuments(docs)
-      this.hasDocs = true
-      const text = docs.slice(0, config.summaryPages).map(doc => doc.pageContent).join('')
-      return DocChat.summarizer.call({ input_document: text }).then(res => res.text.trim())
-    })
+  // 改造后的 add 函数
+  add = (file) => {
+    // 构建完整的文件路径
+    const fullPath = path.isAbsolute(file) ? file : path.join(appFolder, file);
+
+    // 现在使用 fullPath 而不是 file
+    return DocChat.toText(fullPath)
+      .then(docs => DocChat.textSplitter.splitDocuments(docs))
+      .then(docs => {
+        this.vectorStore.addDocuments(docs);
+        this.hasDocs = true;
+
+        const text = docs.slice(0, config.summaryPages).map(doc => doc.pageContent).join('');
+
+        return DocChat.summarizer.call({ input_document: text }).then(res => res.text.trim());
+      });
+  }
 
   clear = () => {
     this.vectorStore = new MemoryVectorStore(DocChat.embeddings)

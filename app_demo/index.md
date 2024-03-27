@@ -34,5 +34,5 @@
 
 ```js
 // 加入文件
-await docChat.add(`./app/doc.md`);
+await docChat.add(`doc.md`);
 ```

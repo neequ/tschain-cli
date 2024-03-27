@@ -149,8 +149,10 @@ npx playwright install
 
 ## 应用文档结构
 
-- app
+- app_demo
   - doc.md
     - 文档
   - index.md
     - LLM APPs 配置文件
+  - demo.tape
+    - demo 动画教程生成脚本

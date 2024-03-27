@@ -10,6 +10,8 @@ Set Height 800
 Set TypingSpeed 50ms
 
 Type "cnpm i && node app.js" Enter Sleep 10s
+Type "请列举所有的模块？" Enter Sleep 20s
+Type "模块2详细内容？" Enter Sleep 20s
 Type "Hi! 我的名字是 Jason !" Enter Sleep 20s
 Type "我的名字是什么?" Enter Sleep 20s
 Type "clear" Enter Sleep 10s
