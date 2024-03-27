@@ -1,5 +1,4 @@
 export default {
-
   /**
    * 获取 AsyncFunction 构造器
    */

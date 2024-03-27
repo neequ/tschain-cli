@@ -13,6 +13,70 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 
+function isTextObject(value) {
+  // 确认对象是否为包含 text 的对象
+  return typeof value === 'object' && value !== null && 'text' in value;
+}
+
+function txtFromKeys(json, targetKeys) {
+  function findContent(current, targetKey, parentKey = '') {
+    // 可能解析为了数字
+    targetKey = String(targetKey);
+    let resultText = '';
+
+    for (const key in current) {
+      if (key == 'text') {
+        // 去除 text 字段
+        continue;
+      }
+      const value = current[key];
+      const fullKey = key;
+
+      if (isTextObject(value)) {
+        if (key === targetKey) {
+          // 累加文本内容
+          resultText += `${fullKey}: ${value.text}\n`;
+        } else if (key.startsWith(targetKey)) {
+          // 已经找到节点
+          resultText += `${fullKey}: ${value.text}\n`;
+        } else if (targetKey.startsWith(key)) {
+          // 继续遍历下一级
+          let title = String(value.text ?? '');
+          if (title) {
+            title = title.split('\n')[0];
+          }
+          resultText += `${fullKey}: ${title}\n`;
+        } else {
+          // 层级不需要继续遍历
+          continue;
+        }
+
+        // 递归搜索嵌套对象
+        const childContent = findContent(value, targetKey, fullKey);
+        if (childContent) {
+          resultText += childContent;
+        }
+      }
+    }
+
+    return resultText;
+  }
+
+  let txt = "";
+  targetKeys.forEach(key => {
+    const content = findContent(json, key);
+    if (content) {
+      txt += content; // 已经格式化，直接添加
+    } else {
+      // txt += `Content not found for the key: ${key}\n`; // 未找到内容
+    }
+  });
+
+  return txt.trim();
+}
+
+
+
 const question = `工作时间是?`; 
 
 const json = JSON.parse(String(fs.readFileSync(path.join(__dirname, 'source.json'))));
