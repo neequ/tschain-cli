@@ -62,7 +62,7 @@ const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(`./${appFolde
 
 const config = {
   chatApiParams: {
-    model: 'gpt-3.5-turbo', //Note: When you change this, you may also need to change the gpt-3-encoder library
+    model: process.env.MODEL, //Note: When you change this, you may also need to change the gpt-3-encoder library
     max_tokens: 2048,
     temperature: 0.5
   },
