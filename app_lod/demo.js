@@ -77,7 +77,7 @@ function txtFromKeys(json, targetKeys) {
 
 
 
-const question = `工作时间是?`; 
+const question = `有哪些福利?`; 
 
 const json = JSON.parse(String(fs.readFileSync(path.join(__dirname, 'source.json'))));
 
