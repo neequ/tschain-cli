@@ -1,11 +1,12 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node app",
+    "start": "node --experimental-specifier-resolution=node app",
+    "test": "node --experimental-specifier-resolution=node test",
     "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress"
   },
   "engines": {
