@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
  * @param {*} markdown 
  * @returns 
  */
-function markdownToJson(markdown) {
+function markdownToLodJson(markdown) {
   const lines = markdown.split('\n');
   const root = {};
   let currentObj = root;
@@ -67,7 +67,7 @@ function markdownToJson(markdown) {
 // Example usage with a file read operation
 const markdownContent = String(fs.readFileSync(path.join(__dirname, 'source.md'), 'utf8'));
 
-const jsonResult = markdownToJson(markdownContent);
+const jsonResult = markdownToLodJson(markdownContent);
 console.log(JSON.stringify(jsonResult, null, 2));
 
 // Optionally, write the JSON to a file

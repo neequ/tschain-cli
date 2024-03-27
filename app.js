@@ -5,8 +5,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 // file system stuff
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import untildify from 'untildify'
 import downloadsFolder from 'downloads-folder'
 
