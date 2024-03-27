@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import { ChatPromptTemplate } from "langchain/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { fileURLToPath } from 'url';
@@ -81,7 +84,6 @@ console.log(contentArray);
 
 
 const txtContent = txtFromKeys(json, contentArray);
-
 
 const response2 = await model.invoke(`请根据背景知识回答问题,不要编造
 背景知识:
