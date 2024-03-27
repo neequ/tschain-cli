@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,7 @@
     "googleapis": "^118.0.0",
     "got": "^12.6.0",
     "gpt-3-encoder": "^1.1.4",
-    "langchain": "^0.0.59",
+    "langchain": "^0.1.30",
     "openai": "^3.2.1",
     "ora": "^6.3.0",
     "pdf-parse": "^1.1.1",
