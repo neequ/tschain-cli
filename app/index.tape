@@ -9,20 +9,18 @@ Set Width 1200
 Set Height 800
 Set TypingSpeed 50ms
 
-Type "cd ~/workspace/chatgpt-cli" Enter Sleep 1s
 Type "yarn && node app.js" Enter Sleep 10s
-Type "Hi! My name is Rick!" Enter Sleep 20s
-Type "What's my name?" Enter Sleep 20s
+Type "Hi! 我的名字是 Jason !" Enter Sleep 20s
+Type "我的名字是什么?" Enter Sleep 20s
 Type "clear" Enter Sleep 10s
 Up@5s 2 Enter Sleep 20s
-Type "Write python code to add 2 numbers" Enter Sleep 20s
+Type "编写Python代码将2个数字相加" Enter Sleep 20s
 Type "copy" Enter Sleep 10s
-Type "How do humans make babies. Respond in emojis only" Enter Sleep 20s
-Type "What were the top 5 most populated countries in 1950 and their populations in table form?" Enter Sleep 20s
-Type "What's the price of AAPL?" Enter Sleep 60s
-Type "~/Downloads/principles.pdf" Enter Sleep 60s
-Type "What's the top management principle?" Enter Sleep 30s
-Type "https://www.nytimes.com/2023/04/14/opinion/china-america-relationship.html" Enter Sleep 45s
-Type "[img] Orange cat wearing a hat" Enter Sleep 30s
+Type "人类是怎样生孩子的？ 仅使用表情符号回复" Enter Sleep 20s
+Type "1950 年人口最多的 5 个国家是哪些？表格显示了它们的人口数量？" Enter Sleep 20s
+Type "chatgpt plus 会员价格多少?" Enter Sleep 60s
+Type "%USERPROFILE%/Downloads/doc.md" Enter Sleep 60s
+Type "https://news.sina.cn/2024-03-27/detail-inaptkks3027928.d.html" Enter Sleep 45s
+Type "[img] 画一只大猫" Enter Sleep 30s
 Type "export" Enter Sleep 10s
 Type "exit" Enter Sleep 1s
