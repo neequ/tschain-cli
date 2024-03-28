@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import utils from '../../utils/index';
+utils.loadEnv();
 
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
@@ -7,11 +9,6 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
-import dotenv from 'dotenv'
-dotenv.config()
-
 
 function isTextObject(value) {
   // 确认对象是否为包含 text 的对象

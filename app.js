@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // Config stuff
-import dotenv from 'dotenv'
-dotenv.config()
+import utils from './utils/index';
+utils.loadEnv();
 
 // file system stuff
 import fs from 'fs';
@@ -43,7 +43,7 @@ import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { DocxLoader } from 'langchain/document_loaders/fs/docx'
 import { PlaywrightWebBaseLoader } from 'langchain/document_loaders/web/playwright'
-import utils from './utils/index';
+
 
 let appFolder = `./app/demo`;
 

@@ -1,5 +1,20 @@
-import utils from '../utils/index';
+// file system stuff
+import fs from 'fs';
+import path from 'path';
+import utils from '.';
+import dotenv from 'dotenv'
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export default {
+
+  /**
+   * 加载环境变量，只有加载后才能调用 AI
+   */
+  loadEnv: function () {
+    dotenv.config({ path: path.join(__dirname, '../.env') });
+  },
   /**
    * 获取 AsyncFunction 构造器
    */
