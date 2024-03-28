@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,8 @@
     "start:lod": "node --experimental-specifier-resolution=node ./app/lod/demo.js",
     "start:markdown": "node --experimental-specifier-resolution=node app ./app/markdown",
     "test": "node --experimental-specifier-resolution=node test",
-    "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress"
+    "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress",
+    "release": "standard-version"
   },
   "engines": {
     "node": ">=14.16"
@@ -35,5 +36,8 @@
     "say": "^0.16.0",
     "terminal-image": "^2.0.0",
     "untildify": "^4.0.0"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0"
   }
 }
