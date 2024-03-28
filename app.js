@@ -46,7 +46,7 @@ import { DocxLoader } from 'langchain/document_loaders/fs/docx'
 import { PlaywrightWebBaseLoader } from 'langchain/document_loaders/web/playwright'
 import utils from './utils/index';
 
-let appFolder = `app_demo`;
+let appFolder = `./app/demo`;
 
 // app.js 或你的主脚本文件
 const args = process.argv.slice(2); // 移除前两个元素，获取额外的参数
@@ -58,7 +58,7 @@ if (args[0]) {
 }
 
 // 获取 app 配置文件
-const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(`./${appFolder}/index.md`, 'utf-8'));
+const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(path.join(appFolder, index.md), 'utf-8'));
 
 const config = {
   chatApiParams: {
