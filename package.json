@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,7 @@
     "start:lod": "node --experimental-specifier-resolution=node ./app/lod/demo.js",
     "start:markdown": "node --experimental-specifier-resolution=node app ./app/markdown",
     "test": "node --experimental-specifier-resolution=node test",
-    "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"增加了 markdown 解析中的代码执行逻辑\" --no-verify && git push -v --progress"
+    "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress"
   },
   "engines": {
     "node": ">=14.16"
