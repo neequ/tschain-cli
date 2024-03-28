@@ -135,4 +135,8 @@ dist
 # vhs
 demo.gif
 
+# 本地文档
 document/
+
+# 本地临时备份文件，无需提交
+*.bak[0-9]*.*

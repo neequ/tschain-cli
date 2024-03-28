@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.33",
+  "version": "0.0.37",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -9,8 +9,9 @@
     "start:demo": "node --experimental-specifier-resolution=node app ./app/demo",
     "start:gov": "node --experimental-specifier-resolution=node app ./app/gov",
     "start:lod": "node --experimental-specifier-resolution=node ./app/lod/demo.js",
+    "start:markdown": "node --experimental-specifier-resolution=node app ./app/markdown",
     "test": "node --experimental-specifier-resolution=node test",
-    "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress"
+    "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"增加了 markdown 解析中的代码执行逻辑\" --no-verify && git push -v --progress"
   },
   "engines": {
     "node": ">=14.16"
@@ -19,7 +20,7 @@
     "@langchain/core": "^0.1.52",
     "@langchain/openai": "^0.0.23",
     "chalk": "^5.2.0",
-    "cli-markdown": "^3.0.3",
+    "cli-markdown": "^3.2.2",
     "clipboardy": "^3.0.0",
     "dotenv": "^16.0.3",
     "downloads-folder": "^3.0.3",

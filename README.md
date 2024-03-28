@@ -149,7 +149,7 @@ npx playwright install
 
 ## 应用文档结构
 
-- app_demo
+- app/demo
   - doc.md
     - 文档
   - index.md
@@ -158,9 +158,9 @@ npx playwright install
     - demo 动画教程生成脚本
   - demo.md
     - demo 的一些演示资料
-- app_lod
+- app/lod
   - 多细节层次
-- app_struct
+- app/struct
   - 结构化
-- app_multiple
+- app/multiple
   - 多文档

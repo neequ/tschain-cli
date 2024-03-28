@@ -56,11 +56,6 @@ if (args[0]) {
   console.log(`运行应用 ${appFolder} ...`);
 }
 
-// 这里不是当前文件的 __filename ，而是主文件 markdown 的文件路径
-const __filename = path.join(appFolder, "index.md");
-// 这里不是当前目录的 __filename ，而是主文件 markdown 所在的路径
-const __dirname = path.dirname(__filename);
-
 // 获取 app 配置文件
 const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(path.join(appFolder, "index.md"), 'utf-8'));
 // const txt = cliMd(await utils.markdownObjToText(app.usage, __filename, __dirname));

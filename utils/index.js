@@ -1,36 +1,78 @@
+import utils from '../utils/index';
 export default {
   /**
    * 获取 AsyncFunction 构造器
    */
   AsyncFunction: Object.getPrototypeOf(async function () { }).constructor,
-  
+
   /**
-   * 将 markdown 文本解析到对象
+   * 将 markdown 文本中的代码块和正文解析到对象中
    * @param {*} markdown 
    * @returns 
    */
   parseMarkdownToTree: function (markdown) {
     const lines = markdown.split('\n');
     const tree = {};
-    let currentKey = '';
-    let inCodeBlock = false; // 用于跟踪是否处于代码块内
+    let currentSection = 'content'; // 默认section
+    tree[currentSection] = { content: '' }; // 初始化
+    let inCodeBlock = false;
+    let codeLanguage = '';
 
-    lines.forEach(line => {
-      if (line.startsWith('#')) {
-        // 获取标题行并清理，作为key
-        const key = line.replace(/^#+\s*/, '').trim();
-        currentKey = key.toLowerCase();
-        tree[currentKey] = ''; // 初始化空字符串，以待后续填充
-        inCodeBlock = false; // 确保在遇到新标题时重置代码块标志
-      } else if (line.startsWith('```')) {
-        // 检查是否为代码块的开始或结束
-        inCodeBlock = !inCodeBlock; // 切换状态
-      } else if (inCodeBlock && currentKey) {
-        // 如果处于代码块内，则累加到当前key的值中
-        tree[currentKey] += line.trim() + '\n';
+    lines.forEach((line, index) => {
+      if (line.startsWith('```') && !inCodeBlock) {
+        // 开始代码块
+        inCodeBlock = true;
+        codeLanguage = line.substring(3).trim(); // 提取代码语言
+        if (!tree[currentSection][codeLanguage]) { // 如果还没有这种语言的键
+          tree[currentSection][codeLanguage] = '';
+        }
+      } else if (line.startsWith('```') && inCodeBlock) {
+        // 结束代码块
+        inCodeBlock = false;
+        codeLanguage = ''; // 重置代码语言
+      } else if (inCodeBlock && codeLanguage) {
+        // 处于代码块内
+        tree[currentSection][codeLanguage] += line.trim() + '\n';
+      } else if (!inCodeBlock && line.startsWith('#')) {
+        // 遇到新的标题行，切换当前部分
+        const sectionName = line.replace(/^#+\s*/, '').trim().toLowerCase();
+        currentSection = sectionName;
+        if (!tree[currentSection]) {
+          tree[currentSection] = { content: '' }; // 初始化新section
+        }
+      } else if (!inCodeBlock) {
+        // 处理非代码块文本
+        if (line.trim() !== '') { // 避免空行
+          tree[currentSection].content += line.trim() + '\n';
+        }
       }
     });
-
     return tree;
+  },
+
+  /**
+   * 根据 key 获取文本内容
+   * @param {*} obj markdown 解析后的对象
+   * @param {*} __filename 当前文件，用于脚本处理
+   * @param {*} __dirname 当前文件所在目录，用于脚本处理
+   */
+  markdownObjToText: async function (obj, __filename, __dirname) {
+    if (!obj) {
+      return '';
+    }
+    if (obj.js) {
+      //执行js
+      try {
+        const dynamicAsyncFunction = new utils.AsyncFunction('__filename', '__dirname', obj.js);
+        return await dynamicAsyncFunction(__filename, __dirname)
+      }
+      catch (e) {
+        console.error(e);
+      }
+    }
+    if (obj.content) {
+      return obj.content;
+    }
+    return '';
   }
 }
