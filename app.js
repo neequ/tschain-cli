@@ -33,10 +33,9 @@ import { Configuration as OpenAIConfig, OpenAIApi, ChatCompletionRequestMessageR
 import { encode } from 'gpt-3-encoder'
 
 // langchain stuff
-import { OpenAI } from "@langchain/openai";
+import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { loadSummarizationChain, AnalyzeDocumentChain } from 'langchain/chains'
 
 // Document loaders
