@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -16,6 +16,7 @@
     "node": ">=14.16"
   },
   "dependencies": {
+    "@langchain/core": "^0.1.52",
     "@langchain/openai": "^0.0.23",
     "chalk": "^5.2.0",
     "cli-markdown": "^3.0.3",

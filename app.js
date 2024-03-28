@@ -33,7 +33,7 @@ import { Configuration as OpenAIConfig, OpenAIApi, ChatCompletionRequestMessageR
 import { encode } from 'gpt-3-encoder'
 
 // langchain stuff
-import { OpenAI } from 'langchain/llms/openai'
+import { OpenAI } from "@langchain/openai";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
@@ -58,7 +58,7 @@ if (args[0]) {
 }
 
 // 获取 app 配置文件
-const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(path.join(appFolder, index.md), 'utf-8'));
+const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(path.join(appFolder, "index.md"), 'utf-8'));
 
 const config = {
   chatApiParams: {
