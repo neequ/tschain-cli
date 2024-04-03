@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 
 // 构建检索增强生成（RAG）流程
 const prompt = ChatPromptTemplate.fromMessages([
-  ["human", "{input}"],
+  ["human", `"{input}"`],
 ]);
 
 const chatModel = new ChatOpenAI({
