@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -13,7 +13,7 @@
     "start:camp": "node --experimental-specifier-resolution=node app ./app/camp",
     "start:rag": "node --experimental-specifier-resolution=node ./app/database/rag.js",
     "test": "node --experimental-specifier-resolution=node test",
-    "dev": "node --experimental-specifier-resolution=node ./app/hr/treeflag_arr_text.js",
+    "dev": "node --experimental-specifier-resolution=node ./app/summerize/index.js",
     "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress",
     "release": "standard-version"
   },
