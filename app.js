@@ -66,6 +66,7 @@ const app = global.app = utils.parseMarkdownToTree(fs.readFileSync(path.join(app
 // const txt = cliMd(await utils.markdownObjToText(app.usage, __filename, __dirname));
 // console.log(txt);
 // return;
+
 const config = {
   chatApiParams: {
     model: process.env.MODEL, //Note: When you change this, you may also need to change the gpt-3-encoder library
@@ -83,90 +84,56 @@ const config = {
   },
   openAiApiKey: process.env.OPENAI_API_KEY
 }
+const openai = new OpenAIApi(new OpenAIConfig({ apiKey: config.openAiApiKey }))
 
-const prompts = {
-  next: () => {
-    rl.resume()
-    console.log('───────────────────────────────')
-    rl.prompt()
-  },
-  imagePhrase: '[img]',
-  webBrowsing: {
-    needed: [
-      "没有实时访问权限",
-      "没有实时信息访问权限",
-      "没有实时信息",
-      "无法提供实时信息",
-      "没有实时信息",
-      "根据我的训练数据",
-      "截至2021年9月",
-      "截至我的编程截止日期"
-    ],
-    forcePhrase: '[web]',
-    /***********************************************************************************************************************/
-    preFacto: (query, result) =>
-      `你能回答“${query}”吗？
-我还找到了以下针对同一查询的网络搜索结果：
-
-${result}
-
-如果需要，随时可以用上述搜索结果中的有用信息来增强你的回答。
-`,
-    /***********************************************************************************************************************/
-    postFacto: (query, result) =>
-      `我找到了以下针对“${query}”的最新网络搜索结果：
-
-${result}
-
-利用上述搜索结果，你现在能对${query}做出最佳猜测吗？
-省略关于此信息可能不准确或可能更改的免责声明。
-简短回答，不要说“基于搜索结果”。
-顺便说一下，现在的日期和时间是${new Date().toLocaleString()}。如果需要，可以在你的回答中提及。
-`
-  },
-  /***********************************************************************************************************************/
-  chatWithDoc: (query, docs) =>
-    `我收到了以下查询：${query}
-
-以下是我拥有的一些文档中与我的查询上下文可能有用的相关摘录：
-
-${docs.map(doc => doc.pageContent).join('\n')}
-
-请尽你所能回答原始查询`,
-
-  /***********************************************************************************************************************/
-  errors: {
-    missingOpenAiApiKey: chalk.redBright('必须设置 OPENAI_API_KEY (查看 https://platform.openai.com/account/api-keys).'),
-    missingGoogleKey: '无法进行网页搜索，因为没有设置 GOOGLE_CUSTOM_SEARCH_CONFIG',
-    noResults: '没有找到搜索结果',
-    nothingToCopy: '历史记录为空，没有内容可以复制',
-    nothingToSay: '还没有消息，没有内容可以朗读'
-  },
-  info: {
-    usage: cliMd(await utils.markdownObjToText(app.usage, __filename, __dirname)).trim(),
-    exported: (file) => chalk.italic(`聊天记录已保存到${file}`),
-    onExit: chalk.italic('再见！'),
-    onClear: chalk.italic('聊天历史已清除！'),
-    onSearch: chalk.italic('正在搜索网络'),
-    searchInfo: chalk.italic('(inferred from Google search)'),
-    onQuery: chalk.italic(`正在查询 ${config.chatApiParams.model}'`),
-    onImage: chalk.italic('正在生成图片'),
-    imageSaved: (file) => chalk.italic(`图片已保存到 ${file}`),
-    onDoc: (file, finish) => chalk.italic(finish ? `已处理 ${file}。这是前 ${config.summaryPages} 页的摘要：` : `正在处理 ${file}`),
-    onCopy: (text) => chalk.italic(`已将最后一条消息复制到剪贴板（${text.length} 字符）`)
+class History {
+  constructor() {
+    this.clear()
   }
+
+  add = (message) => {
+    // OpenAI recommends replacing newlines with spaces for best results
+    if (message.role === Role.User) message.content = message.content.replace(/\s\s+/g, ' ').trim()
+    message.numTokens = encode(message.content).length
+    this.history.push(message)
+    while (this.totalTokens() > config.chatApiParams.max_tokens) {
+      const idx = this.history.findIndex(msg => msg.role !== Role.System)
+      if (idx < 0) break
+      this.history.splice(idx, 1)
+    }
+  }
+
+  totalTokens = () => this.history.map(msg => msg.numTokens).reduce((a, b) => a + b, 0)
+
+  clear = () => {
+    let that = this;
+
+    setTimeout(async function () {
+
+      that.history = []
+      // 加入系统提示词
+      if (app.system) {
+        that.add({ role: Role.System, content: await utils.markdownObjToText(app.system, docChat, __filename, __dirname) })
+      }
+
+      // 初始化文档
+      if (app.document) {
+        // 使用 AsyncFunction 构造器创建一个新的异步函数
+        // 注意，AsyncFunction 的参数是动态的，最后一个参数是函数体，其余的都是函数参数
+        const dynamicAsyncFunction = new utils.AsyncFunction('docChat', await utils.markdownObjToText(app.document, docChat, __filename, __dirname));
+        await dynamicAsyncFunction(docChat)
+      }
+    }, 0)
+  }
+
+  get = () => this.history.map(msg => ({ role: msg.role, content: msg.content }))
+
+  lastMessage = () => this.history.findLast(item => item.role === Role.Assistant)
+
+  show = () => console.log(this.history)
 }
 
-const systemCommands = prompts.info.usage.split(/\r?\n/)
-  .filter(s => s.trim().startsWith('*'))
-  .flatMap(s => s.split(':')[0].split(' '))
-  .map(s => s.trim())
-  .filter(s => s.length > 3)
-
-if (!config.openAiApiKey) {
-  console.error(prompts.errors.missingOpenAiApiKey)
-  process.exit(-1)
-}
+const history = new History()
 
 class DocChat {
   static embeddings = new OpenAIEmbeddings({ openAIApiKey: config.openAiApiKey })
@@ -231,56 +198,91 @@ class DocChat {
   query = (query) => this.vectorStore.similaritySearch(query, Math.floor(config.chatApiParams.max_tokens / config.textSplitter.chunkSize))
 }
 
-class History {
-  constructor() {
-    this.clear()
+const docChat = new DocChat()
+
+const prompts = {
+  next: () => {
+    rl.resume()
+    console.log('───────────────────────────────')
+    rl.prompt()
+  },
+  imagePhrase: '[img]',
+  webBrowsing: {
+    needed: [
+      "没有实时访问权限",
+      "没有实时信息访问权限",
+      "没有实时信息",
+      "无法提供实时信息",
+      "没有实时信息",
+      "根据我的训练数据",
+      "截至2021年9月",
+      "截至我的编程截止日期"
+    ],
+    forcePhrase: '[web]',
+    /***********************************************************************************************************************/
+    preFacto: (query, result) =>
+      `你能回答“${query}”吗？
+我还找到了以下针对同一查询的网络搜索结果：
+
+${result}
+
+如果需要，随时可以用上述搜索结果中的有用信息来增强你的回答。
+`,
+    /***********************************************************************************************************************/
+    postFacto: (query, result) =>
+      `我找到了以下针对“${query}”的最新网络搜索结果：
+
+${result}
+
+利用上述搜索结果，你现在能对${query}做出最佳猜测吗？
+省略关于此信息可能不准确或可能更改的免责声明。
+简短回答，不要说“基于搜索结果”。
+顺便说一下，现在的日期和时间是${new Date().toLocaleString()}。如果需要，可以在你的回答中提及。
+`
+  },
+  /***********************************************************************************************************************/
+  chatWithDoc: (query, docs) =>
+    `我收到了以下查询：${query}
+
+以下是我拥有的一些文档中与我的查询上下文可能有用的相关摘录：
+
+${docs.map(doc => doc.pageContent).join('\n')}
+
+请尽你所能回答原始查询`,
+
+  /***********************************************************************************************************************/
+  errors: {
+    missingOpenAiApiKey: chalk.redBright('必须设置 OPENAI_API_KEY (查看 https://platform.openai.com/account/api-keys).'),
+    missingGoogleKey: '无法进行网页搜索，因为没有设置 GOOGLE_CUSTOM_SEARCH_CONFIG',
+    noResults: '没有找到搜索结果',
+    nothingToCopy: '历史记录为空，没有内容可以复制',
+    nothingToSay: '还没有消息，没有内容可以朗读'
+  },
+  info: {
+    usage: cliMd(await utils.markdownObjToText(app.usage, docChat, __filename, __dirname)).trim(),
+    exported: (file) => chalk.italic(`聊天记录已保存到${file}`),
+    onExit: chalk.italic('再见！'),
+    onClear: chalk.italic('聊天历史已清除！'),
+    onSearch: chalk.italic('正在搜索网络'),
+    searchInfo: chalk.italic('(inferred from Google search)'),
+    onQuery: chalk.italic(`正在查询 ${config.chatApiParams.model}'`),
+    onImage: chalk.italic('正在生成图片'),
+    imageSaved: (file) => chalk.italic(`图片已保存到 ${file}`),
+    onDoc: (file, finish) => chalk.italic(finish ? `已处理 ${file}。这是前 ${config.summaryPages} 页的摘要：` : `正在处理 ${file}`),
+    onCopy: (text) => chalk.italic(`已将最后一条消息复制到剪贴板（${text.length} 字符）`)
   }
-
-  add = (message) => {
-    // OpenAI recommends replacing newlines with spaces for best results
-    if (message.role === Role.User) message.content = message.content.replace(/\s\s+/g, ' ').trim()
-    message.numTokens = encode(message.content).length
-    this.history.push(message)
-    while (this.totalTokens() > config.chatApiParams.max_tokens) {
-      const idx = this.history.findIndex(msg => msg.role !== Role.System)
-      if (idx < 0) break
-      this.history.splice(idx, 1)
-    }
-  }
-
-  totalTokens = () => this.history.map(msg => msg.numTokens).reduce((a, b) => a + b, 0)
-
-  clear = () => {
-    let that = this;
-
-    setTimeout(async function () {
-
-      that.history = []
-      // 加入系统提示词
-      if (app.system) {
-        that.add({ role: Role.System, content: await utils.markdownObjToText(app.system, __filename, __dirname) })
-      }
-
-      // 初始化文档
-      if (app.document) {
-        // 使用 AsyncFunction 构造器创建一个新的异步函数
-        // 注意，AsyncFunction 的参数是动态的，最后一个参数是函数体，其余的都是函数参数
-        const dynamicAsyncFunction = new utils.AsyncFunction('docChat', await utils.markdownObjToText(app.document, __filename, __dirname));
-        await dynamicAsyncFunction(docChat)
-      }
-    }, 0)
-  }
-
-  get = () => this.history.map(msg => ({ role: msg.role, content: msg.content }))
-
-  lastMessage = () => this.history.findLast(item => item.role === Role.Assistant)
-
-  show = () => console.log(this.history)
 }
 
-const openai = new OpenAIApi(new OpenAIConfig({ apiKey: config.openAiApiKey }))
-const history = new History()
-const docChat = new DocChat()
+const systemCommands = prompts.info.usage.split(/\r?\n/)
+  .filter(s => s.trim().startsWith('*'))
+  .flatMap(s => s.split(':')[0].split(' '))
+  .map(s => s.trim())
+  .filter(s => s.length > 3)
+
+if (!config.openAiApiKey) {
+  console.error(prompts.errors.missingOpenAiApiKey)
+  process.exit(-1)
+}
 
 const rl = readline.createInterface({
   input: process.stdin,

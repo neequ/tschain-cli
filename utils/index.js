@@ -68,25 +68,26 @@ export default {
   /**
    * 根据 key 获取文本内容
    * @param {*} obj markdown 解析后的对象
+   * @param {*} docChat 
    * @param {*} __filename 当前文件，用于脚本处理
    * @param {*} __dirname 当前文件所在目录，用于脚本处理
    */
-  markdownObjToText: async function (obj, __filename, __dirname) {
+  markdownObjToText: async function (obj, docChat, __filename, __dirname) {
     if (!obj) {
       return '';
     }
     if (obj.js) {
       //执行js
       try {
-        const dynamicAsyncFunction = new utils.AsyncFunction('__filename', '__dirname', obj.js);
-        return await dynamicAsyncFunction(__filename, __dirname)
+        const dynamicAsyncFunction = new utils.AsyncFunction('__filename', '__dirname', 'docChat', obj.js);
+        return await dynamicAsyncFunction(__filename, __dirname, docChat)
       }
       catch (e) {
         console.error(e);
       }
     }
-    if (obj.content) {
-      return obj.content;
+    if (obj.text) {
+      return obj.text;
     }
     return '';
   }

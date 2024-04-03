@@ -1,7 +1,7 @@
 
 # TSChain CLI 
 
-这是一个迷你的 LLM APPs 构建工具，基于node.js编写，支持以下功能：
+一个革命性的命令行工具，使得开发者和非开发者都能轻松集成和管理大型语言模型（LLMs）。支持markdown语法，让创建复杂的LLM应用（如GPTs和RAGs）变得触手可及。特点包括一键编辑、超高准确性和token优化、支持长达100万token的扩展文本输出、多语言开发兼容性（JavaScript/TypeScript、Python、C++、Java等），以及灵活的模型接口（ChatGPT、Google Gemini、Claude等）。采用自然语言编程，全面自动化扩展，并实现无缝npm包管理集成，为开发周期带来真正的自动化和简化流程。支持以下功能：
 
 * [网页浏览](#网页浏览)
 * 文本转语音（输入`speak`）
