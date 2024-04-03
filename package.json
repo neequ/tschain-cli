@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
@@ -13,6 +13,7 @@
     "start:camp": "node --experimental-specifier-resolution=node app ./app/camp",
     "start:rag": "node --experimental-specifier-resolution=node ./app/database/rag.js",
     "test": "node --experimental-specifier-resolution=node test",
+    "dev": "node --experimental-specifier-resolution=node ./app/hr/treeflag_arr_text.js",
     "commit": "git pull && npm --no-git-tag-version version patch && git add . && git commit -m \"update\" --no-verify && git push -v --progress",
     "release": "standard-version"
   },
@@ -32,6 +33,7 @@
     "got": "^12.6.0",
     "gpt-3-encoder": "^1.1.4",
     "hnswlib-node": "^3.0.0",
+    "json5": "^2.2.3",
     "langchain": "^0.1.30",
     "openai": "^3.2.1",
     "ora": "^6.3.0",
