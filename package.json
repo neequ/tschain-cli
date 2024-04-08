@@ -1,6 +1,6 @@
 {
   "name": "tschain-cli",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "bin": "./app.js",
   "license": "MIT",
   "type": "module",
